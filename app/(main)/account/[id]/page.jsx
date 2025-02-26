@@ -1,12 +1,16 @@
 import { getAccountWithTransactions } from "@/actions/accounts";
 import { notFound } from "next/navigation";
-import React, { Suspense } from "react";
-import TransactionTable from "./_components/transaction-table";
+import { use } from "react"; // ✅ Required in Next.js 14+
+import TransactionTable from "../_components/transaction-table";
 import { BarLoader } from "react-spinners";
 
-const AccountsPage = async ({ params }) => {
-  const accountData = await getAccountWithTransactions(params.id);
+const AccountsPage = async ({ params: paramsPromise }) => {
+  const params = await paramsPromise; // ✅ Await params
+  if (!params?.id) {
+    notFound();
+  }
 
+  const accountData = await getAccountWithTransactions(params.id);
   if (!accountData) {
     notFound();
   }
@@ -21,8 +25,7 @@ const AccountsPage = async ({ params }) => {
             {account.name}
           </h1>
           <p className="text-muted-foreground">
-            {account.type.charAt(0) + account.type.slice(1).toLowerCase()}{" "}
-            Account
+            {account.type.charAt(0) + account.type.slice(1).toLowerCase()} Account
           </p>
         </div>
 
@@ -36,14 +39,8 @@ const AccountsPage = async ({ params }) => {
         </div>
       </div>
 
-      {/* Chart Sections */}
-
       {/* Transaction Table */}
-      <Suspense
-        fallback={<BarLoader className="mt-4" width={"100%"} color="#9333ea" />}
-      >
-        <TransactionTable transactions={transactions} />
-      </Suspense>
+      <TransactionTable transactions={transactions} />
     </div>
   );
 };
