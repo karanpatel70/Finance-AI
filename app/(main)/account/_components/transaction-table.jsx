@@ -10,11 +10,11 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  RefreshCw,
-  Clock,
   RefreshCcw,
+  Clock,
 } from "lucide-react";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 import {
   Table,
@@ -48,7 +48,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { categoryColors } from "@/data/categories";
+// import { bulkDeleteTransactions } from "@/actions/account";
+import { bulkDeleteTransactions } from "@/actions/accounts";
+import useFetch from "@/hooks/use-fetch";
+import { BarLoader } from "react-spinners";
+import { useRouter } from "next/navigation";
 
 const RECURRING_INTERVALS = {
   DAILY: "Daily",
@@ -56,7 +62,6 @@ const RECURRING_INTERVALS = {
   MONTHLY: "Monthly",
   YEARLY: "Yearly",
 };
-import { useRouter } from "next/navigation";
 
 const TransactionTable = ({ transactions }) => {
   const router = useRouter();
@@ -73,53 +78,50 @@ const TransactionTable = ({ transactions }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const filteresAndSortedTransactions = useMemo(() => {
-
     let result = [...transactions];
 
-      // Apply search filter
-      if (searchTerm) {
-        const searchLower = searchTerm.toLowerCase();
-        result = result.filter((transaction) =>
-          transaction.description?.toLowerCase().includes(searchLower)
-        );
-      }
-  
-      // Apply type filter
-      if (typeFilter) {
-        result = result.filter((transaction) => transaction.type === typeFilter);
-      }
-  
-      // Apply recurring filter
-      if (recurringFilter) {
-        result = result.filter((transaction) => {
-          if (recurringFilter === "recurring") return transaction.isRecurring;
-          return !transaction.isRecurring;
-        });
-      }
-  
-      // Apply sorting
-      result.sort((a, b) => {
-        let comparison = 0;
-  
-        switch (sortConfig.field) {
-          case "date":
-            comparison = new Date(a.date) - new Date(b.date);
-            break;
-          case "amount":
-            comparison = a.amount - b.amount;
-            break;
-          case "category":
-            comparison = a.category.localeCompare(b.category);
-            break;
-          default:
-            comparison = 0;
-        }
-  
-        return sortConfig.direction === "asc" ? comparison : -comparison;
-      });
-    return result;
+    // Apply search filter
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      result = result.filter((transaction) =>
+        transaction.description?.toLowerCase().includes(searchLower)
+      );
+    }
 
-    
+    // Apply type filter
+    if (typeFilter) {
+      result = result.filter((transaction) => transaction.type === typeFilter);
+    }
+
+    // Apply recurring filter
+    if (recurringFilter) {
+      result = result.filter((transaction) => {
+        if (recurringFilter === "recurring") return transaction.isRecurring;
+        return !transaction.isRecurring;
+      });
+    }
+
+    // Apply sorting
+    result.sort((a, b) => {
+      let comparison = 0;
+
+      switch (sortConfig.field) {
+        case "date":
+          comparison = new Date(a.date) - new Date(b.date);
+          break;
+        case "amount":
+          comparison = a.amount - b.amount;
+          break;
+        case "category":
+          comparison = a.category.localeCompare(b.category);
+          break;
+        default:
+          comparison = 0;
+      }
+
+      return sortConfig.direction === "asc" ? comparison : -comparison;
+    });
+    return result;
   }, [transactions, searchTerm, typeFilter, recurringFilter, sortConfig]);
   const handleSort = (field) => {
     setSortConfig((current) => ({
@@ -136,7 +138,7 @@ const TransactionTable = ({ transactions }) => {
         : [...current, id]
     );
   };
-  // console.log(selectedIds);
+  console.log(selectedIds);
 
   const handleSelectAll = () => {
     setSelectedIds((current) =>
@@ -145,22 +147,39 @@ const TransactionTable = ({ transactions }) => {
         : filteresAndSortedTransactions.map((t) => t.id)
     );
   };
+
+  const {
+    loading: deleteLoading,
+    fn: deleteFn,
+    data: deleted,
+  } = useFetch(bulkDeleteTransactions);
+
   const handleBulkDelete = async () => {
+    
     if (
       !window.confirm(
         `Are you sure you want to delete ${selectedIds.length} transactions?`
       )
-    )
+    ) {
       return;
+    }
 
-    deleteFn(selectedIds);
+    try {
+      console.log(selectedIds);
+      await deleteFn(selectedIds); // Ensure this returns success
+      toast.success("Transactions deleted successfully");
+      setSelectedIds([]); // Clear selected transactions
+      router.refresh(); // Refresh data after deletion
+    } catch (error) {
+      toast.error("Failed to delete transactions");
+    }
   };
 
-  // useEffect(() => {
-  //   if (deleted && !deleteLoading) {
-  //     toast.error("Transactions deleted successfully");
-  //   }
-  // }, [deleted, deleteLoading]);
+  useEffect(() => {
+    if (deleted && !deleteLoading) {
+      toast.error("Transactions deleted successfully");
+    }
+  }, [deleted, deleteLoading]);
 
   const handleClearFilters = () => {
     setSearchTerm("");
@@ -171,6 +190,12 @@ const TransactionTable = ({ transactions }) => {
 
   return (
     <div className="space-y-4">
+      {deleteLoading && (
+        <BarLoader className="mt-4" width={"100%"} color="#9333ea" />
+          
+          
+      
+      )}
       {/* Filters */}
 
       <div className="flex flex-col sm:flex-row gap-4">
