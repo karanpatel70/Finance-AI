@@ -12,6 +12,7 @@ import {
   ChevronRight,
   RefreshCcw,
   Clock,
+  RefreshCw,
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -123,6 +124,22 @@ const TransactionTable = ({ transactions }) => {
     });
     return result;
   }, [transactions, searchTerm, typeFilter, recurringFilter, sortConfig]);
+
+
+  const ITEMS_PER_PAGE = 10;
+   // Pagination calculations
+   const totalPages = Math.ceil(
+    filteresAndSortedTransactions.length / ITEMS_PER_PAGE
+  );
+  const paginatedTransactions = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteresAndSortedTransactions.slice(
+      startIndex,
+      startIndex + ITEMS_PER_PAGE
+    );
+  }, [filteresAndSortedTransactions, currentPage]);
+
+
   const handleSort = (field) => {
     setSortConfig((current) => ({
       field,
@@ -155,7 +172,6 @@ const TransactionTable = ({ transactions }) => {
   } = useFetch(bulkDeleteTransactions);
 
   const handleBulkDelete = async () => {
-    
     if (
       !window.confirm(
         `Are you sure you want to delete ${selectedIds.length} transactions?`
@@ -188,13 +204,16 @@ const TransactionTable = ({ transactions }) => {
     setCurrentPage(1);
   };
 
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    setSelectedIds([]); // Clear selections on page change
+  };
+
+
   return (
     <div className="space-y-4">
       {deleteLoading && (
         <BarLoader className="mt-4" width={"100%"} color="#9333ea" />
-          
-          
-      
       )}
       {/* Filters */}
 
@@ -271,22 +290,20 @@ const TransactionTable = ({ transactions }) => {
         </div>
       </div>
 
-      {/* Transactions */}
-      <div className="">
+       {/* Transactions Table */}
+       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">
+              <TableHead className="w-[50px]">
                 <Checkbox
-                  onCheckedChange={handleSelectAll}
                   checked={
-                    selectedIds.length ===
-                      filteresAndSortedTransactions.length &&
-                    filteresAndSortedTransactions.length > 0
+                    selectedIds.length === paginatedTransactions.length &&
+                    paginatedTransactions.length > 0
                   }
+                  onCheckedChange={handleSelectAll}
                 />
               </TableHead>
-
               <TableHead
                 className="cursor-pointer"
                 onClick={() => handleSort("date")}
@@ -301,7 +318,6 @@ const TransactionTable = ({ transactions }) => {
                     ))}
                 </div>
               </TableHead>
-
               <TableHead>Description</TableHead>
               <TableHead
                 className="cursor-pointer"
@@ -317,7 +333,6 @@ const TransactionTable = ({ transactions }) => {
                     ))}
                 </div>
               </TableHead>
-
               <TableHead
                 className="cursor-pointer text-right"
                 onClick={() => handleSort("amount")}
@@ -332,22 +347,22 @@ const TransactionTable = ({ transactions }) => {
                     ))}
                 </div>
               </TableHead>
-              <TableHead className="text-right">Recurring</TableHead>
+              <TableHead>Recurring</TableHead>
               <TableHead className="w-[50px]" />
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteresAndSortedTransactions.length === 0 ? (
+            {paginatedTransactions.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={7}
                   className="text-center text-muted-foreground"
                 >
-                  No Transaction Found
+                  No transactions found
                 </TableCell>
               </TableRow>
             ) : (
-              filteresAndSortedTransactions.map((transaction) => (
+              paginatedTransactions.map((transaction) => (
                 <TableRow key={transaction.id}>
                   <TableCell>
                     <Checkbox
@@ -370,10 +385,12 @@ const TransactionTable = ({ transactions }) => {
                     </span>
                   </TableCell>
                   <TableCell
-                    className="text-right font-medium"
-                    style={{
-                      color: transaction.type === "EXPENSE" ? "red" : "green",
-                    }}
+                    className={cn(
+                      "text-right font-medium",
+                      transaction.type === "EXPENSE"
+                        ? "text-red-500"
+                        : "text-green-500"
+                    )}
                   >
                     {transaction.type === "EXPENSE" ? "-" : "+"}$
                     {transaction.amount.toFixed(2)}
@@ -387,7 +404,7 @@ const TransactionTable = ({ transactions }) => {
                               variant="secondary"
                               className="gap-1 bg-purple-100 text-purple-700 hover:bg-purple-200"
                             >
-                              <RefreshCcw className="h-3 w-3" />
+                              <RefreshCw className="h-3 w-3" />
                               {
                                 RECURRING_INTERVALS[
                                   transaction.recurringInterval
@@ -410,8 +427,8 @@ const TransactionTable = ({ transactions }) => {
                       </TooltipProvider>
                     ) : (
                       <Badge variant="outline" className="gap-1">
-                        <Clock className="h-3 w-3"></Clock>
-                        One - Time{" "}
+                        <Clock className="h-3 w-3" />
+                        One-time
                       </Badge>
                     )}
                   </TableCell>
@@ -448,8 +465,32 @@ const TransactionTable = ({ transactions }) => {
           </TableBody>
         </Table>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <span className="text-sm">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
     </div>
   );
-};
-
+}
 export default TransactionTable;
