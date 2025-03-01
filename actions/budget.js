@@ -36,6 +36,9 @@ export async function getCurrentBudget(accountId) {
       0
     );
 
+    console.log("startOfMonth", startOfMonth);
+    console.log("endOfMonth", endOfMonth);  
+
     const expenses = await db.transaction.aggregate({
       where: {
         userId: user.id,
