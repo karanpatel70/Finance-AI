@@ -17,6 +17,8 @@ export async function getCurrentBudget(accountId) {
       throw new Error("User not found");
     }
 
+    console.log("user", user);
+
     const budget = await db.budget.findFirst({
       where: {
         userId: user.id,
@@ -25,19 +27,23 @@ export async function getCurrentBudget(accountId) {
 
     // Get current month's expenses
     const currentDate = new Date();
+    console.log("currentDate", currentDate);
     const startOfMonth = new Date(
       currentDate.getFullYear(),
-      currentDate.getMonth()-1,
+      currentDate.getMonth(),
       1
     );
     const endOfMonth = new Date(
       currentDate.getFullYear(),
-      currentDate.getMonth() ,
+      currentDate.getMonth() +1,
       0
     );
 
     console.log("startOfMonth", startOfMonth);
     console.log("endOfMonth", endOfMonth);  
+    console.log("usid",user.id );
+
+    
 
     const expenses = await db.transaction.aggregate({
       where: {
@@ -53,6 +59,8 @@ export async function getCurrentBudget(accountId) {
         amount: true,
       },
     });
+
+    console.log("expenses", expenses);
 
     return {
       budget: budget ? { ...budget, amount: budget.amount.toNumber() } : null,

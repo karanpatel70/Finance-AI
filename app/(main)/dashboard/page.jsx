@@ -8,6 +8,7 @@ import { getCurrentBudget } from "@/actions/budget";
 import { BudgetProgress } from "./_components/budget-progress";
 import { DashboardOverview } from "./_components/transaction-overview";
 async function DashboardPage() {
+  console.log("DashboardPage");
   const [accounts] = await Promise.all([
     getUserAccounts(),
     // getDashboardData(),
@@ -15,10 +16,13 @@ async function DashboardPage() {
 
   const defaultAccount = accounts?.find((account) => account.isDefault);
 
+  console.log("defaultAccount", defaultAccount);
+
   // Get budget for default account
   let budgetData = null;
   if (defaultAccount) {
     budgetData = await getCurrentBudget(defaultAccount.id);
+    console.log("budget data", budgetData);
   }
   const transactions = await getDashboardData(defaultAccount.id);
 

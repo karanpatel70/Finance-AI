@@ -46,7 +46,7 @@ export function BudgetProgress({ initialBudget, currentExpenses }) {
 
     await updateBudgetFn(amount);
   };
-  console.log(percentUsed);
+  // console.log(percentUsed);
 
   const handleCancel = () => {
     setNewBudget(initialBudget?.amount?.toString() || "");

@@ -11,7 +11,7 @@ export async function sendEmail({ to, subject, react }) {
       to,
       subject,
       react,
-    });
+    }); 
 
     return { success: true, data };
   } catch (error) {

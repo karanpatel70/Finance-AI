@@ -53,6 +53,7 @@ const HeroSection = () => {
           <div ref={imageRef} className="hero-image">
             <Image
               src="/banner.jpeg"
+              // src="public\Slide1.JPG"
               width={1280}
               height={720}
               alt="Dashboard Preview"
