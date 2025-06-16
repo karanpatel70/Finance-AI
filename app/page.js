@@ -989,43 +989,43 @@ export default function Home() {
       <HeroSection />
 
       {/* Stats Section with AI Finance Animation */}
-      <section className="py-24 bg-gradient-to-r from-blue-50 to-indigo-50 relative">
-        <div className="absolute inset-0 bg-[url('/placeholder.svg?height=200&width=200')] bg-repeat opacity-5"></div>
+      // <section className="py-24 bg-gradient-to-r from-blue-50 to-indigo-50 relative">
+      //   <div className="absolute inset-0 bg-[url('/placeholder.svg?height=200&width=200')] bg-repeat opacity-5"></div>
         
-        {/* Added AI Finance Animation */}
-        <div className="absolute top-0 right-0 w-64 h-64 opacity-70 lg:opacity-100 transform -translate-y-1/4 translate-x-1/4">
-          {FinanceAnimations.aiRobot}
-        </div>
+      //   {/* Added AI Finance Animation */}
+      //   <div className="absolute top-0 right-0 w-64 h-64 opacity-70 lg:opacity-100 transform -translate-y-1/4 translate-x-1/4">
+      //     {FinanceAnimations.aiRobot}
+      //   </div>
         
-        <div className="container mx-auto px-4 relative">
-          <motion.div
-            ref={countRef}
-            initial="hidden"
-            animate={countControls}
-            variants={staggerContainer}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8"
-          >
-            {statsData.map((stat, index) => (
-              <motion.div
-                key={index}
-                custom={index}
-                variants={statsVariants}
-                className="text-center bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg transform hover:scale-105 transition-transform duration-300"
-              >
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={countInView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-3"
-                >
-                  {stat.value}
-                </motion.div>
-                <div className="text-gray-700 font-medium">{stat.label}</div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+      //   <div className="container mx-auto px-4 relative">
+      //     <motion.div
+      //       ref={countRef}
+      //       initial="hidden"
+      //       animate={countControls}
+      //       variants={staggerContainer}
+      //       className="grid grid-cols-2 md:grid-cols-4 gap-8"
+      //     >
+      //       {statsData.map((stat, index) => (
+      //         <motion.div
+      //           key={index}
+      //           custom={index}
+      //           variants={statsVariants}
+      //           className="text-center bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg transform hover:scale-105 transition-transform duration-300"
+      //         >
+      //           <motion.div
+      //             initial={{ opacity: 0, scale: 0.5 }}
+      //             animate={countInView ? { opacity: 1, scale: 1 } : {}}
+      //             transition={{ duration: 0.5, delay: index * 0.1 }}
+      //             className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-3"
+      //           >
+      //             {stat.value}
+      //           </motion.div>
+      //           <div className="text-gray-700 font-medium">{stat.label}</div>
+      //         </motion.div>
+      //       ))}
+      //     </motion.div>
+      //   </div>
+      // </section>
 
       {/* Features Section with Growing Chart Animation */}
       <section id="features" className="py-24 relative">
@@ -1082,9 +1082,9 @@ export default function Home() {
         <div className="absolute inset-0 bg-[url('/placeholder.svg?height=200&width=200')] bg-repeat opacity-5"></div>
         
         {/* Added Coins Animation */}
-        <div className="absolute bottom-10 right-10 w-64 h-64 opacity-80">
-          {FinanceAnimations.coins}
-        </div>
+        // <div className="absolute bottom-10 right-10 w-64 h-64 opacity-80">
+        //   {FinanceAnimations.coins}
+        // </div>
         
         <div className="container mx-auto px-4 relative">
           <motion.div
@@ -1142,67 +1142,67 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section with Security Shield Animation */}
-      <section id="testimonials" className="py-24 relative">
-        <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-blue-50 to-transparent"></div>
+      // <section id="testimonials" className="py-24 relative">
+      //   <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-blue-50 to-transparent"></div>
         
-        {/* Added Security Shield Animation */}
-        <div className="absolute top-10 left-10 w-64 h-64 opacity-50 lg:opacity-80">
-          {FinanceAnimations.securityShield}
-        </div>
+      //   {/* Added Security Shield Animation */}
+      //   <div className="absolute top-10 left-10 w-64 h-64 opacity-50 lg:opacity-80">
+      //     {FinanceAnimations.securityShield}
+      //   </div>
 
-        <div className="container mx-auto px-4 relative">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={fadeIn}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
-              What Our Users Say
-            </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto rounded-full"></div>
-          </motion.div>
+      //   <div className="container mx-auto px-4 relative">
+      //     <motion.div
+      //       initial="hidden"
+      //       whileInView="visible"
+      //       viewport={{ once: true, amount: 0.2 }}
+      //       variants={fadeIn}
+      //       className="text-center mb-16"
+      //     >
+      //       <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+      //         What Our Users Say
+      //       </h2>
+      //       <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto rounded-full"></div>
+      //     </motion.div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
-            variants={staggerContainer}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
-            {testimonialsData.map((testimonial, index) => (
-              <motion.div key={index} variants={cardVariants}>
-                <Card className="h-full border-none shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white overflow-hidden group">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                  <CardContent className="space-y-5 p-8">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-16 h-16 rounded-full overflow-hidden">
-                        <Image
-                          src={testimonial.image}
-                          alt={testimonial.name}
-                          width={64}
-                          height={64}
-                          className="object-cover"
-                        />
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-semibold group-hover:text-blue-600 transition-colors duration-300">
-                          {testimonial.name}
-                        </h3>
-                        <p className="text-gray-600">{testimonial.role}</p>
-                      </div>
-                    </div>
-                    <p className="text-gray-600 italic">
-                      "{testimonial.quote}"
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+      //     <motion.div
+      //       initial="hidden"
+      //       whileInView="visible"
+      //       viewport={{ once: true, amount: 0.1 }}
+      //       variants={staggerContainer}
+      //       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+      //     >
+      //       {testimonialsData.map((testimonial, index) => (
+      //         <motion.div key={index} variants={cardVariants}>
+      //           <Card className="h-full border-none shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white overflow-hidden group">
+      //             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+      //             <CardContent className="space-y-5 p-8">
+      //               <div className="flex items-center space-x-4">
+      //                 <div className="w-16 h-16 rounded-full overflow-hidden">
+      //                   <Image
+      //                     src={testimonial.image}
+      //                     alt={testimonial.name}
+      //                     width={64}
+      //                     height={64}
+      //                     className="object-cover"
+      //                   />
+      //                 </div>
+      //                 <div>
+      //                   <h3 className="text-xl font-semibold group-hover:text-blue-600 transition-colors duration-300">
+      //                     {testimonial.name}
+      //                   </h3>
+      //                   <p className="text-gray-600">{testimonial.role}</p>
+      //                 </div>
+      //               </div>
+      //               <p className="text-gray-600 italic">
+      //                 "{testimonial.quote}"
+      //               </p>
+      //             </CardContent>
+      //           </Card>
+      //         </motion.div>
+      //       ))}
+      //     </motion.div>
+      //   </div>
+      // </section>
 
       {/* Call to Action Section with Smart Investing Animation */}
       <section className="py-24 bg-gradient-to-r from-blue-50 to-indigo-50 relative">
