@@ -7,24 +7,25 @@ import AccountCard from "./_components/account-card";
 import { getCurrentBudget } from "@/actions/budget";
 import { BudgetProgress } from "./_components/budget-progress";
 import { DashboardOverview } from "./_components/transaction-overview";
-async function DashboardPage() {
-  console.log("DashboardPage");
-  const [accounts] = await Promise.all([
-    getUserAccounts(),
-    // getDashboardData(),
-  ]);
 
+async function DashboardPage() {
+  // Fetch all user accounts first
+  const accounts = await getUserAccounts();
   const defaultAccount = accounts?.find((account) => account.isDefault);
 
-  console.log("defaultAccount", defaultAccount);
-
-  // Get budget for default account
+  // Safely fetch budget and transactions only if a default account exists
   let budgetData = null;
+  let transactions = []; // Default to an empty array
+
   if (defaultAccount) {
-    budgetData = await getCurrentBudget(defaultAccount.id);
-    console.log("budget data", budgetData);
+    // Run fetches in parallel for better performance
+    const [budgetResult, transactionResult] = await Promise.all([
+      getCurrentBudget(defaultAccount.id),
+      getDashboardData(defaultAccount.id),
+    ]);
+    budgetData = budgetResult;
+    transactions = transactionResult || [];
   }
-  const transactions = await getDashboardData(defaultAccount.id);
 
   return (
     <div className="space-y-8">
@@ -36,7 +37,7 @@ async function DashboardPage() {
       {/* Dashboard Overview */}
       <DashboardOverview
         accounts={accounts}
-        transactions={transactions || []}
+        transactions={transactions}
       />
 
       {/* Accounts Grid */}
