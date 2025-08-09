@@ -45,16 +45,16 @@ export default function RootLayout({ children }) {
                     Empowering your financial decisions with cutting-edge AI technology.
                   </p>
                   <div className="flex space-x-4">
-                    <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+                    <a href="https://x.com/" className="text-gray-400 hover:text-blue-400 transition-colors">
                       <LucideTwitter size={20} />
                     </a>
-                    <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+                    <a href="https://www.linkedin.com/" className="text-gray-400 hover:text-blue-400 transition-colors">
                       <LucideLinkedin size={20} />
                     </a>
-                    <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+                    <a href="https://www.facebook.com/" className="text-gray-400 hover:text-blue-400 transition-colors">
                       <LucideFacebook size={20} />
                     </a>
-                    <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+                    <a href="https://www.instagram.com/" className="text-gray-400 hover:text-blue-400 transition-colors">
                       <LucideInstagram size={20} />
                     </a>
                   </div>
@@ -121,21 +121,21 @@ export default function RootLayout({ children }) {
                     <li className="flex items-center">
                       <LucideMail size={16} className="mr-2 text-gray-400" />
                       <a
-                        href="mailto:info@financeai.com"
+                        href="mailto:karanpatel6898@gmail.com"
                         className="text-gray-400 hover:text-blue-400 transition-colors"
                       >
-                        info@financeai.com
+                        karanpatel6898@gmail.com
                       </a>
                     </li>
                     <li className="flex items-center">
                       <LucidePhone size={16} className="mr-2 text-gray-400" />
-                      <a href="tel:+1234567890" className="text-gray-400 hover:text-blue-400 transition-colors">
-                        +1 (234) 567-890
+                      <a href="tel:+91 6351023729" className="text-gray-400 hover:text-blue-400 transition-colors">
+                        +91 6351023729
                       </a>
                     </li>
                     <li className="flex items-start">
                       <LucideMapPin size={16} className="mr-2 mt-1 text-gray-400" />
-                      <span className="text-gray-400">123 Finance Street, New York, NY 10001</span>
+                      <span className="text-gray-400">123 Finance Street, Changa , Gujarat</span>
                     </li>
                   </ul>
                 </div>
