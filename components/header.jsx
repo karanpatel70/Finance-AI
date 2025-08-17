@@ -29,6 +29,12 @@ const Header = async () => {
             <a href="#features" className="text-gray-600 hover:text-blue-600">
               Features
             </a>
+            <Link
+              href="/about"
+              className="text-gray-600 hover:text-blue-600"
+            >
+              About Us
+            </Link>
             <a
               href="#testimonials"
               className="text-gray-600 hover:text-blue-600"
@@ -36,6 +42,14 @@ const Header = async () => {
               Testimonials
             </a>
           </SignedOut>
+          <SignedIn>
+            <Link
+              href="/about"
+              className="text-gray-600 hover:text-blue-600"
+            >
+              About Us
+            </Link>
+          </SignedIn>
         </div>
 
         {/* Action Buttons */}
