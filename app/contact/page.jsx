@@ -55,7 +55,7 @@ const contactData = {
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-20">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-20" suppressHydrationWarning>
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
         <div className="container mx-auto px-4 text-center">
@@ -89,7 +89,7 @@ export default function ContactPage() {
                 <CardContent className="p-8">
                   <h2 className="text-3xl font-bold text-gray-800 mb-6">Send us a Message</h2>
                   
-                  <form className="space-y-6">
+                  <form className="space-y-6" suppressHydrationWarning>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">

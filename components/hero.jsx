@@ -28,7 +28,7 @@ const HeroSection = () => {
     }
   }, []);
   return (
-    <section className="pt-40 pb-20 px-4">
+    <section className="pt-40 pb-20 px-4" suppressHydrationWarning>
       <div className="container mx-auto text-center">
         <h1 className="text-5xl md:text-8xl lg:text-[105px] pb-6 gradient-title">
           Manage Your Finances <br /> with Intelligence

@@ -432,7 +432,7 @@ export default function Home() {
   }, [countInView, countControls])
 
   return (
-    <div className="min-h-screen bg-white overflow-hidden">
+    <div className="min-h-screen bg-white overflow-hidden" suppressHydrationWarning>
       <HeroSection />
 
       {/* Stats Section with AI Finance Animation */}

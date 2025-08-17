@@ -4,6 +4,7 @@ import { Suspense, use } from "react"; // ✅ Required in Next.js 14+
 import TransactionTable from "../_components/transaction-table";
 import { BarLoader } from "react-spinners";
 import { AccountChart } from "../_components/account-chart";
+import ClientOnly from "@/components/client-only";
 
 const AccountsPage = async ({ params: paramsPromise }) => {
   const params = await paramsPromise; // ✅ Await params
@@ -19,7 +20,7 @@ const AccountsPage = async ({ params: paramsPromise }) => {
   const { transactions, ...account } = accountData;
 
   return (
-    <div className="space-y-8 px-5">
+    <div className="space-y-8 px-5" suppressHydrationWarning>
       <div className="flex gap-4 items-end justify-between">
         <div>
           <h1 className="text-5xl sm:text-6xl font-bold tracking-tight gradient-title capitalize">
@@ -44,11 +45,15 @@ const AccountsPage = async ({ params: paramsPromise }) => {
       <Suspense
         fallback={<BarLoader className="mt-4" width={"100%"} color="#9333ea" />}
       >
-        <AccountChart transactions={transactions} />
+        <ClientOnly>
+          <AccountChart transactions={transactions} />
+        </ClientOnly>
       </Suspense>
 
       {/* Transaction Table */}
-      <TransactionTable transactions={transactions} />
+      <ClientOnly>
+        <TransactionTable transactions={transactions} />
+      </ClientOnly>
     </div>
   );
 };
