@@ -19,9 +19,17 @@ import { updateBudget } from "@/actions/budget";
 
 export function BudgetProgress({ initialBudget, currentExpenses }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [newBudget, setNewBudget] = useState(
-    initialBudget?.amount?.toString() || ""
-  );
+  const [newBudget, setNewBudget] = useState("");
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+    // Set initial budget value after mounting to prevent hydration mismatch
+    if (initialBudget?.amount) {
+      setNewBudget(initialBudget.amount.toString());
+    }
+  }, [initialBudget?.amount]);
+  
   console.log(initialBudget);
   
 
@@ -32,8 +40,8 @@ export function BudgetProgress({ initialBudget, currentExpenses }) {
     error,
   } = useFetch(updateBudget);
 
-  const percentUsed = initialBudget
-    ? (currentExpenses / initialBudget.amount) * 100
+  const percentUsed = initialBudget && initialBudget.amount
+    ? Math.min((currentExpenses / initialBudget.amount) * 100, 100)
     : 0;
 
   const handleUpdateBudget = async () => {
@@ -66,8 +74,29 @@ export function BudgetProgress({ initialBudget, currentExpenses }) {
     }
   }, [error]);
 
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <Card suppressHydrationWarning>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <div className="flex-1">
+            <CardTitle className="text-sm font-medium">
+              Monthly Budget (Default Account)
+            </CardTitle>
+            <div className="flex items-center gap-2 mt-1">
+              <CardDescription>Loading...</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card>
+    <Card key={`budget-${initialBudget?.amount || 'no-budget'}`} suppressHydrationWarning>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div className="flex-1">
           <CardTitle className="text-sm font-medium">
@@ -105,7 +134,7 @@ export function BudgetProgress({ initialBudget, currentExpenses }) {
             ) : (
               <>
                 <CardDescription>
-                  {initialBudget
+                  {initialBudget && initialBudget.amount
                     ? `$${currentExpenses.toFixed(
                         2
                       )} of $${initialBudget.amount.toFixed(2)} spent`
@@ -125,7 +154,7 @@ export function BudgetProgress({ initialBudget, currentExpenses }) {
         </div>
       </CardHeader>
       <CardContent>
-        {initialBudget && (
+        {initialBudget && initialBudget.amount && (
           <div className="space-y-2">
             <Progress
               value={percentUsed}

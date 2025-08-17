@@ -74,14 +74,14 @@ const CreateAccountDrawer = ({ children }) => {
   }, [error]);
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer open={open} onOpenChange={setOpen} suppressHydrationWarning>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>Create New Account</DrawerTitle>
         </DrawerHeader>
         <div className="px-4 pb-4">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" suppressHydrationWarning>
             <div className="space-y-2">
               <label
                 htmlFor="name"

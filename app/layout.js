@@ -3,6 +3,7 @@ import "./globals.css"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { ClerkProvider } from "@clerk/nextjs"
+import dynamic from "next/dynamic"
 import { Toaster } from "sonner"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -18,7 +19,7 @@ export default function RootLayout({ children }) {
       <html lang="en">
         <body className={`${inter.className}`}>
           <Header></Header>
-          <main className="min-h-screen">{children}</main>
+          <main className="min-h-screen" suppressHydrationWarning>{children}</main>
 
           <Toaster richColors />
 
