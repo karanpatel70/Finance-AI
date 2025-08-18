@@ -65,21 +65,6 @@ export const footerData = {
       name: "Budget Planning",
       description: "Smart budgeting with AI assistance",
       url: "/services/budget-planning"
-    },
-    {
-      name: "Tax Optimization",
-      description: "Tax planning and optimization strategies",
-      url: "/services/tax-optimization"
-    },
-    {
-      name: "Debt Management",
-      description: "Smart debt consolidation and repayment plans",
-      url: "/services/debt-management"
-    },
-    {
-      name: "Retirement Planning",
-      description: "AI-powered retirement savings strategies",
-      url: "/services/retirement-planning"
     }
   ],
 
@@ -113,16 +98,6 @@ export const footerData = {
       name: "Security",
       description: "How we protect your data",
       url: "/security"
-    },
-    {
-      name: "Research",
-      description: "Financial research and insights",
-      url: "/research"
-    },
-    {
-      name: "Events",
-      description: "Webinars and financial workshops",
-      url: "/events"
     }
   ],
 
@@ -145,17 +120,17 @@ export const footerData = {
     },
     {
       name: "Accounts", 
-      url: "/accounts",
+      url: "/dashboard",
       description: "Manage your financial accounts"
     },
     {
       name: "Transactions",
-      url: "/transactions", 
+      url: "/expenses", 
       description: "View and manage transactions"
     },
     {
       name: "Budgets",
-      url: "/budgets",
+      url: "/budget",
       description: "Set and track your budgets"
     },
     {
@@ -170,7 +145,7 @@ export const footerData = {
     },
     {
       name: "API Documentation",
-      url: "/api-docs",
+      url: "/api",
       description: "Developer resources and API docs"
     },
     {
