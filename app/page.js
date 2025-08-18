@@ -32,6 +32,7 @@ export const featuresData = [
     ),
     title: "Budget Planning",
     description: "Create and manage your budgets with ease. Set spending limits and track your progress in real-time.",
+    href: "/budget",
   },
   {
     icon: (
@@ -52,6 +53,7 @@ export const featuresData = [
     ),
     title: "Expense Tracking",
     description: "Automatically categorize and track your expenses. Get insights into your spending habits.",
+    href: "/expenses",
   },
   {
     icon: (
@@ -74,6 +76,7 @@ export const featuresData = [
     title: "Financial Goals",
     description:
       "Set and track your financial goals. Whether it's saving for a vacation or paying off debt, we've got you covered.",
+    href: "/goals",
   },
   {
     icon: (
@@ -95,6 +98,7 @@ export const featuresData = [
     ),
     title: "Investment Tracking",
     description: "Monitor your investments in one place. Track performance and make informed decisions.",
+    href: "/investments",
   },
   {
     icon: (
@@ -116,6 +120,7 @@ export const featuresData = [
     ),
     title: "Financial Reports",
     description: "Get detailed reports and visualizations of your financial health. Understand your money better.",
+    href: "/reports",
   },
   {
     icon: (
@@ -136,6 +141,7 @@ export const featuresData = [
     ),
     title: "Secure & Private",
     description: "Your financial data is encrypted and secure. We prioritize your privacy and security.",
+    href: "/security",
   },
 ]
 
@@ -506,18 +512,20 @@ export default function Home() {
           >
             {featuresData.map((feature, index) => (
               <motion.div key={index} variants={cardVariants}>
-                <Card className="h-full border-none shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white overflow-hidden group">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                  <CardContent className="space-y-5 p-8">
-                    <div className="text-blue-600 transform group-hover:scale-110 transition-transform duration-300">
-                      {feature.icon}
-                    </div>
-                    <h3 className="text-xl font-semibold group-hover:text-blue-600 transition-colors duration-300">
-                      {feature.title}
-                    </h3>
-                    <p className="text-gray-600">{feature.description}</p>
-                  </CardContent>
-                </Card>
+                <Link href={feature.href || "#"}>
+                  <Card className="h-full border-none shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white overflow-hidden group cursor-pointer">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                    <CardContent className="space-y-5 p-8">
+                      <div className="text-blue-600 transform group-hover:scale-110 transition-transform duration-300">
+                        {feature.icon}
+                      </div>
+                      <h3 className="text-xl font-semibold group-hover:text-blue-600 transition-colors duration-300">
+                        {feature.title}
+                      </h3>
+                      <p className="text-gray-600">{feature.description}</p>
+                    </CardContent>
+                  </Card>
+                </Link>
               </motion.div>
             ))}
           </motion.div>

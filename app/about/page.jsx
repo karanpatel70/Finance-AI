@@ -115,7 +115,7 @@ const aboutData = {
         expertise: ["Product Management", "User Experience", "Market Research", "Feature Development"]
       },
       {
-        name: "Anjali Parmar",
+        name: "Riddhi Ramanuj",
         role: "Head of Marketing",
         image: "/logo.png",
         bio: "Marketing expert passionate about financial education and empowerment. Building awareness and trust in our AI-powered financial platform.",
