@@ -319,6 +319,7 @@ const TransactionTable = ({ transactions }) => {
                 </div>
               </TableHead>
               <TableHead>Description</TableHead>
+              <TableHead>Tags</TableHead>
               <TableHead
                 className="cursor-pointer"
                 onClick={() => handleSort("category")}
@@ -374,6 +375,39 @@ const TransactionTable = ({ transactions }) => {
                     {format(new Date(transaction.date), "PP")}
                   </TableCell>
                   <TableCell>{transaction.description}</TableCell>
+                  <TableCell>
+                    {transaction.tags && transaction.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {transaction.tags.map((tag) => (
+                          <Badge key={tag.id} variant="outline">
+                            {tag.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                    {transaction.splitTransactions && transaction.splitTransactions.length > 0 && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Badge className="ml-1 text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 cursor-pointer">
+                                    Split
+                                </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <div className="text-sm">
+                                    <div className="font-medium mb-1">Split Details:</div>
+                                    {transaction.splitTransactions.map(entry => (
+                                        <div key={entry.id} className="flex justify-between items-center">
+                                            <span className="mr-2">{entry.category || "Uncategorized"}:</span>
+                                            <span>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(entry.amount)}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                    )}
+                  </TableCell>
                   <TableCell className="capitalize">
                     <span
                       style={{
@@ -381,7 +415,7 @@ const TransactionTable = ({ transactions }) => {
                       }}
                       className="px-2 py-1 rounded text-white text-sm"
                     >
-                      {transaction.category}
+                      {transaction.category || "Uncategorized"}
                     </span>
                   </TableCell>
                   <TableCell
@@ -393,13 +427,13 @@ const TransactionTable = ({ transactions }) => {
                     )}
                   >
                     {transaction.type === "EXPENSE" ? "-" : "+"}$
-                    {transaction.amount.toFixed(2)}
+                    {(transaction.amount || transaction.splitTransactions?.reduce((sum, entry) => sum + entry.amount, 0) || 0).toFixed(2)}
                   </TableCell>
                   <TableCell>
                     {transaction.isRecurring ? (
                       <TooltipProvider>
                         <Tooltip>
-                          <TooltipTrigger>
+                          <TooltipTrigger asChild>
                             <Badge
                               variant="secondary"
                               className="gap-1 bg-purple-100 text-purple-700 hover:bg-purple-200"

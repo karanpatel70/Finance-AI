@@ -24,6 +24,14 @@ model User {
   budgets      Budget[]
   goals        Goal[]
   investments  Investment[]
+  historicalBudgets HistoricalBudget[]
+  userCategories UserCategory[]
+  tags         Tag[]
+  categorizationRules CategorizationRule[]
+  splitTransactionEntries SplitTransactionEntry[]
+  dividendOrInterests DividendOrInterest[]
+  watchlist     String? // Comma-separated list of investment symbols for watchlist
+  liabilities   Liability[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 
@@ -49,20 +57,24 @@ model Account {
 model Transaction {
   id                String             @id @default(uuid())
   type              TransactionType
-  amount            Decimal
+  amount            Decimal?
   description       String?
   date              DateTime
-  category          String
+  category          String?
   receiptUrl        String?
   isRecurring       Boolean            @default(false)
   recurringInterval RecurringInterval? // Only used if isRecurring is true
   nextRecurringDate DateTime? // Next date for recurring transaction
   lastProcessed     DateTime? // Last time this recurring transaction was processed
   status            TransactionStatus  @default(COMPLETED)
+  isTaxDeductible   Boolean            @default(false)
+  isTaxableIncome   Boolean            @default(false)
   userId            String
   user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   accountId         String
   account           Account            @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  tags              Tag[]
+  splitTransactions SplitTransactionEntry[]
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
 
@@ -71,17 +83,107 @@ model Transaction {
   @@map("transactions")
 }
 
+model SplitTransactionEntry {
+  id            String          @id @default(uuid())
+  amount        Decimal
+  category      String?
+  description   String?
+  transactionId String
+  transaction   Transaction     @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  tags          Tag[] // Tags for individual split entries
+
+  @@index([transactionId])
+  @@index([userId])
+  @@map("split_transaction_entries")
+}
+
 model Budget {
   id            String    @id @default(uuid())
   amount        Decimal
+  category      String
+  rolloverAmount Decimal @default(0)
+  alertThreshold Decimal @default(0.8) // Default to 80%
+  alertFrequency String @default("MONTHLY") // DAILY, WEEKLY, MONTHLY, NONE
   lastAlertSent DateTime? // Track when the last alert was sent
-  userId        String    @unique
+  userId        String
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  @@unique([userId, category])
   @@index([userId])
   @@map("budgets")
+}
+
+model HistoricalBudget {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category      String
+  month         Int
+  year          Int
+  budgetedAmount Decimal
+  actualExpenses Decimal   @default(0)
+  rolloverAmount Decimal   @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([userId, category, month, year])
+  @@index([userId])
+  @@map("historical_budgets")
+}
+
+model UserCategory {
+  id        String   @id @default(uuid())
+  name      String
+  type      TransactionType // INCOME or EXPENSE
+  color     String?
+  icon      String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categorizationRules CategorizationRule[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("user_categories")
+}
+
+model Tag {
+  id          String       @id @default(uuid())
+  name        String
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  splitTransactionEntries SplitTransactionEntry[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("tags")
+}
+
+model CategorizationRule {
+  id          String         @id @default(uuid())
+  userId      String
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  keyword     String // Keyword to match in transaction description or merchant name
+  categoryId  String? // Optional: Link to a UserCategory
+  userCategory UserCategory?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tagIds      String? // Optional: Comma-separated list of tag IDs to apply
+  priority    Int            @default(0) // Higher number means higher priority
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@unique([userId, keyword])
+  @@index([userId])
+  @@map("categorization_rules")
 }
 
 model Goal {
@@ -90,8 +192,13 @@ model Goal {
   targetAmount  Decimal
   currentAmount Decimal     @default(0)
   dueDate       DateTime?
+  priority      Int         @default(0) // Higher number means higher priority
+  autoContributeAmount Decimal? // Amount to automatically contribute
+  autoContributeFrequency String? // DAILY, WEEKLY, MONTHLY, YEARLY
+  lastContributedAt DateTime? // Track when the last auto-contribution was made
   status        GoalStatus  @default(ACTIVE)
   userId        String
+  sharedWithUserIds String? // Comma-separated list of user IDs with whom the goal is shared
   user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -106,7 +213,10 @@ model Investment {
   name         String?
   quantity     Decimal  @default(0)
   averageCost  Decimal  @default(0)
+  lastPrice    Decimal? // Last fetched market price
+  lastPriceFetchedAt DateTime? // Timestamp of last fetched price
   notes        String?
+  dividendOrInterests DividendOrInterest[]
   userId       String
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt    DateTime @default(now())
@@ -114,6 +224,24 @@ model Investment {
 
   @@index([userId])
   @@map("investments")
+}
+
+model DividendOrInterest {
+  id            String    @id @default(uuid())
+  investmentId  String
+  investment    Investment @relation(fields: [investmentId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount        Decimal
+  date          DateTime
+  type          String // e.g., "DIVIDEND", "INTEREST"
+  description   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([investmentId])
+  @@index([userId])
+  @@map("dividend_interest")
 }
 
 enum TransactionType {
@@ -143,4 +271,20 @@ enum GoalStatus {
   ACTIVE
   COMPLETED
   CANCELLED
+}
+
+model Liability {
+  id            String    @id @default(uuid())
+  name          String
+  amount        Decimal
+  type          String    // e.g., "LOAN", "CREDIT_CARD"
+  dueDate       DateTime? // Optional due date
+  interestRate  Decimal?  // Optional interest rate
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("liabilities")
 }
