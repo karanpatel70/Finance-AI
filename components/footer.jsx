@@ -16,10 +16,11 @@ import {
   LucideHeadphones,
 } from "lucide-react"
 import { footerData } from "@/data/footer"
+import CurrentYear from "@/components/current-year";
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 text-gray-800 pt-16 pb-8" suppressHydrationWarning>
+    <footer className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 text-gray-800 pt-16 pb-8">
       <div className="container mx-auto px-4">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 mb-12">
@@ -272,7 +273,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 mb-4 md:mb-0">
             <p className="text-gray-600 text-sm">
-              © {new Date().getFullYear()} {footerData.company.name}. All rights reserved.
+              © <CurrentYear /> {footerData.company.name}. All rights reserved.
             </p>
             <div className="flex items-center space-x-2">
               <LucideShield className="h-4 w-4 text-green-500" />

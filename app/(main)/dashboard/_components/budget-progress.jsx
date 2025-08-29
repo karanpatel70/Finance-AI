@@ -34,6 +34,17 @@ export function BudgetProgress({ initialBudget, currentExpenses }) {
 
   useEffect(() => {
     setMounted(true);
+    // Reset form fields if initialBudget becomes null or undefined
+    if (!initialBudget) {
+      setNewBudgetAmount("");
+      setNewBudgetCategory("Uncategorized");
+      setNewRolloverAmount("");
+      setNewAlertThreshold("");
+      setNewAlertFrequency("MONTHLY");
+      setIsEditing(false);
+      return;
+    }
+
     if (initialBudget?.amount) {
       setNewBudgetAmount(initialBudget.amount.toString());
     }
@@ -66,6 +77,11 @@ export function BudgetProgress({ initialBudget, currentExpenses }) {
 
     if (isNaN(amount) || amount <= 0) {
       toast.error("Please enter a valid budget amount");
+      return;
+    }
+
+    if (!initialBudget) {
+      toast.error("Cannot update budget: No budget selected or initialized.");
       return;
     }
 
@@ -133,9 +149,11 @@ export function BudgetProgress({ initialBudget, currentExpenses }) {
             )}
             Monthly Budget
           </CardTitle>
-          {isEditing ? (
-            <div className="flex flex-col gap-2 w-full mt-2">
-              <Input
+          {initialBudget ? (
+            <>
+              {isEditing ? (
+              <div className="flex flex-col gap-2 w-full mt-2">
+                <Input
                 type="number"
                 value={newBudgetAmount}
                 onChange={(e) => setNewBudgetAmount(e.target.value)}
@@ -193,13 +211,13 @@ export function BudgetProgress({ initialBudget, currentExpenses }) {
                 <Button
                   size="sm"
                   onClick={handleUpdateBudget}
-                  disabled={isLoading}
+                  disabled={isLoading || !initialBudget}
                 >
                   <Check className="h-4 w-4 mr-1" /> Save
                 </Button>
               </div>
             </div>
-          ) : (
+          ) : ( // This now correctly introduces the else branch for isEditing
             <div className="space-y-2">
               <CardDescription className="text-sm text-gray-600">
                 {initialBudget && initialBudget.amount
@@ -228,9 +246,17 @@ export function BudgetProgress({ initialBudget, currentExpenses }) {
                 </TooltipProvider>
               )}
             </div>
+          )
+          }
+          </>
+          ) : (
+            <div className="flex flex-col items-center justify-center p-4 text-center">
+              <p className="text-gray-500 mb-4">No budget set for this category.</p>
+              {/* Optionally, add a button to create a new budget here if needed */}
+            </div>
           )}
         </div>
-        {!isEditing && (
+        {!isEditing && initialBudget && ( // Only show edit button if a budget exists
           <Button
             variant="ghost"
             size="icon"

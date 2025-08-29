@@ -102,25 +102,38 @@ export async function updateBudget(data, category = "Uncategorized") {
 
     if (!user) throw new Error("User not found");
 
-    // Update or create budget
-    const budget = await db.budget.upsert({
-      where: {
-        userId: user.id,
-        category,
-      },
-      update: {
-        amount: data.amount,
-        alertThreshold: data.alertThreshold,
-        alertFrequency: data.alertFrequency,
-      },
-      create: {
-        userId: user.id,
-        amount: data.amount,
-        category,
-        alertThreshold: data.alertThreshold,
-        alertFrequency: data.alertFrequency,
-      },
-    });
+    const { id, category, ...updateData } = data;
+
+    let budget;
+
+    if (id) {
+      // If an ID is provided, it's an update operation
+      budget = await db.budget.update({
+        where: {
+          id: id,
+          userId: user.id,
+        },
+        data: {
+          ...updateData,
+          ...(category && { category }), // Only update category if provided
+          ...(updateData.rolloverAmount !== undefined && { rolloverAmount: updateData.rolloverAmount }),
+          ...(updateData.alertThreshold !== undefined && { alertThreshold: updateData.alertThreshold }),
+          ...(updateData.alertFrequency !== undefined && { alertFrequency: updateData.alertFrequency }),
+        },
+      });
+    } else {
+      // If no ID is provided, it's a create operation
+      budget = await db.budget.create({
+        data: {
+          userId: user.id,
+          amount: updateData.amount,
+          category: category || "Uncategorized",
+          rolloverAmount: updateData.rolloverAmount || 0,
+          alertThreshold: updateData.alertThreshold || 0,
+          alertFrequency: updateData.alertFrequency || "MONTHLY",
+        },
+      });
+    }
 
     revalidatePath("/dashboard");
     return {
