@@ -108,7 +108,7 @@ export async function updateGoalProgress(goalId, incrementBy) {
   const existing = await db.goal.findFirst({ where: { id: goalId, userId: user.id } });
   if (!existing) throw new Error("Goal not found");
 
-  const newCurrent = (existing.currentAmount ?? 0) + addAmount;
+  const newCurrent = (existing.currentAmount?.toNumber() ?? 0) + addAmount;
   const shouldComplete = newCurrent >= existing.targetAmount;
 
   const goal = await db.goal.update({

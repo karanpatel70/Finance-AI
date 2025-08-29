@@ -85,7 +85,12 @@ export default function GoalsPage() {
 
   const handleProgress = async (goalId) => {
     if (!progressAmount) return;
-    await updateProgressFn(goalId, progressAmount);
+    const parsedProgressAmount = parseFloat(progressAmount);
+    if (isNaN(parsedProgressAmount)) {
+      toast.error("Please enter a valid amount for progress.");
+      return;
+    }
+    await updateProgressFn(goalId, parsedProgressAmount);
     setProgressAmount("");
     loadGoals();
   };
