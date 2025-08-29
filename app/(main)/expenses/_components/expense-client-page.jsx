@@ -62,11 +62,14 @@ export function ExpenseClientPage({
       // Prepare tagIds for the backend (it expects an array of strings)
       const filtersToSend = {
         ...filters,
+        accountId: filters.accountId === "all-accounts" ? null : filters.accountId, // Handle 'All Accounts'
+        category: filters.category === "all-categories" ? null : filters.category, // Handle 'All Categories'
         startDate: filters.startDate ? filters.startDate.toISOString() : null,
         endDate: filters.endDate ? filters.endDate.toISOString() : null,
-        minAmount: filters.minAmount ? parseFloat(filters.minAmount) : null,
-        maxAmount: filters.maxAmount ? parseFloat(filters.maxAmount) : null,
+        minAmount: filters.minAmount && !isNaN(parseFloat(filters.minAmount)) ? parseFloat(filters.minAmount) : null, // Convert to float or null
+        maxAmount: filters.maxAmount && !isNaN(parseFloat(filters.maxAmount)) ? parseFloat(filters.maxAmount) : null, // Convert to float or null
         tagIds: filters.tagIds.length > 0 ? filters.tagIds : null,
+        isRecurring: filters.isRecurring === "true" ? true : filters.isRecurring === "false" ? false : null, // Ensure boolean or null
       };
 
       const fetchedTransactions = await getFilteredTransactions(filtersToSend);
@@ -90,16 +93,16 @@ export function ExpenseClientPage({
 
   const handleClearFilters = () => {
     setFilters({
-      accountId: defaultAccountId || "",
+      accountId: "all-accounts", // Reset to show all accounts
       type: "EXPENSE",
-      category: "",
+      category: "all-categories", // Reset to show all categories
       tagIds: [],
       minAmount: "",
       maxAmount: "",
       startDate: null,
       endDate: null,
       isRecurring: null,
-      status: "",
+      status: "all-statuses", // Reset to show all statuses
     });
   };
 
@@ -125,7 +128,7 @@ export function ExpenseClientPage({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {/* Account Filter */}
             <Select
-              value={filters.accountId}
+              value={filters.accountId === null ? "all-accounts" : filters.accountId}
               onValueChange={(value) => handleFilterChange("accountId", value)}
             >
               <SelectTrigger>
@@ -143,7 +146,7 @@ export function ExpenseClientPage({
 
             {/* Category Filter */}
             <Select
-              value={filters.category}
+              value={filters.category === null ? "all-categories" : filters.category}
               onValueChange={(value) => handleFilterChange("category", value)}
             >
               <SelectTrigger>
@@ -152,7 +155,7 @@ export function ExpenseClientPage({
               <SelectContent>
                 <SelectItem value="all-categories">All Categories</SelectItem>
                 {userCategories
-                  .filter((cat) => cat.type === "EXPENSE")
+                  // .filter((cat) => cat.type === "EXPENSE") // Removed this filter to show all categories
                   .map((category) => (
                     <SelectItem key={category.id} value={category.name}>
                       {category.name}
@@ -266,7 +269,7 @@ export function ExpenseClientPage({
 
             {/* Status Filter */}
             <Select
-              value={filters.status}
+              value={filters.status === null ? "all-statuses" : filters.status}
               onValueChange={(value) => handleFilterChange("status", value)}
             >
               <SelectTrigger>

@@ -11,7 +11,7 @@ export default async function ExpensesPage() {
   const accounts = await getUserAccounts();
   const defaultAccount = accounts?.find((a) => a.isDefault) || accounts[0];
   
-  const userCategories = await getUserCategories();
+  const userCategories = await getUserCategories(); // Fetch all categories
   const tags = await getTags();
 
   // Fetch initial transactions (e.g., all expenses for the default account)

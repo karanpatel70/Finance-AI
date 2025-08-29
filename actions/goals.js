@@ -13,6 +13,7 @@ const serializeGoal = (goal) => ({
     ? Math.min(100, (goal.currentAmount?.toNumber() ?? 0) / goal.targetAmount.toNumber() * 100)
     : 0,
   lastContributedAt: goal.lastContributedAt,
+  dueDate: goal.dueDate ? new Date(goal.dueDate) : null, // Convert YYYY-MM-DD string back to Date object
   sharedWithUserIds: goal.sharedWithUserIds ? goal.sharedWithUserIds.split(",") : [], // Convert back to array
 });
 
@@ -48,7 +49,7 @@ export async function createGoal(data) {
     data: {
       title: data.title,
       targetAmount,
-      dueDate: data.dueDate ? new Date(data.dueDate) : null,
+      dueDate: data.dueDate ? new Date(data.dueDate).toISOString().split('T')[0] : null, // Store as YYYY-MM-DD
       priority: data.priority || 0,
       autoContributeAmount: data.autoContributeAmount ? parseFloat(data.autoContributeAmount) : null,
       autoContributeFrequency: data.autoContributeFrequency || null,
@@ -73,7 +74,7 @@ export async function updateGoal(goalId, data) {
     if (isNaN(amt) || amt < 0) throw new Error("Invalid current amount");
     payload.currentAmount = amt;
   }
-  if (payload.dueDate) payload.dueDate = new Date(payload.dueDate);
+  if (payload.dueDate) payload.dueDate = new Date(payload.dueDate).toISOString().split('T')[0]; // Store as YYYY-MM-DD
   if (payload.priority !== undefined) {
     const p = parseInt(payload.priority);
     if (isNaN(p)) throw new Error("Invalid priority");

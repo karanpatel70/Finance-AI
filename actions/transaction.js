@@ -476,11 +476,12 @@ export async function getFilteredTransactions(filters) {
       ...(filters.type && { type: filters.type }),
       ...(filters.accountId && { accountId: filters.accountId }),
       ...(filters.category && { category: filters.category }),
-      ...(filters.minAmount && { amount: { gte: parseFloat(filters.minAmount) } }),
-      ...(filters.maxAmount && { amount: { lte: parseFloat(filters.maxAmount) } }),
+      ...(filters.minAmount && !isNaN(parseFloat(filters.minAmount)) && { amount: { gte: parseFloat(filters.minAmount) } }),
+      ...(filters.maxAmount && !isNaN(parseFloat(filters.maxAmount)) && { amount: { lte: parseFloat(filters.maxAmount) } }),
       ...(filters.startDate && { date: { gte: new Date(filters.startDate) } }), // New: Start Date filter
       ...(filters.endDate && { date: { lte: new Date(filters.endDate) } }),   // New: End Date filter
       ...(filters.tagIds && { tags: { some: { id: { in: filters.tagIds } } } }),
+      ...(filters.isRecurring !== null && filters.isRecurring !== undefined && { isRecurring: filters.isRecurring }), // New: Recurring filter, exclude if null or undefined
     };
 
     const transactions = await db.transaction.findMany({

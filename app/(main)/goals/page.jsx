@@ -54,7 +54,7 @@ export default function GoalsPage() {
     await createGoalFn({
       title,
       targetAmount,
-      dueDate: dueDate ? dueDate.toISOString() : null,
+      dueDate: dueDate, // Pass the Date object directly, it will be formatted in the action
       priority: parseInt(priority),
       autoContributeAmount: autoContributeAmount ? parseFloat(autoContributeAmount) : null,
       autoContributeFrequency: autoContributeFrequency || null,
@@ -76,7 +76,8 @@ export default function GoalsPage() {
     // Or you could open a modal with currentData pre-filled
     const newPriority = prompt(`Enter new priority for ${currentData.title}:`, currentData.priority);
     if (newPriority !== null && !isNaN(parseInt(newPriority))) {
-      await updateGoalFn(goalId, { priority: parseInt(newPriority) });
+      // Assuming currentData contains the original dueDate, only update if it's explicitly changed
+      await updateGoalFn(goalId, { priority: parseInt(newPriority), dueDate: currentData.dueDate }); 
       loadGoals();
     } else if (newPriority !== null) {
       toast.error("Invalid priority. Please enter a number.");
@@ -105,10 +106,14 @@ export default function GoalsPage() {
       toast.error("Please enter at least one simulation parameter.");
       return;
     }
+
+    const parsedAdditionalMonthlyContribution = parseFloat(additionalMonthlyContribution) || 0;
+    const parsedExpectedInterestRate = parseFloat(expectedInterestRate) || 0;
+
     setSimulatedGoalId(goalId);
     await runSimulationFn(goalId, {
-      additionalMonthlyContribution,
-      expectedInterestRate,
+      additionalMonthlyContribution: parsedAdditionalMonthlyContribution,
+      expectedInterestRate: parsedExpectedInterestRate,
     });
   };
 
@@ -213,7 +218,7 @@ export default function GoalsPage() {
                     </TableCell>
                     <TableCell>
                       {g.sharedWithUserIds && g.sharedWithUserIds.length > 0 ? (
-                        <TooltipProvider>
+                        <TooltipProvider skipMountCheck>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Badge variant="outline" className="gap-1 cursor-pointer">
