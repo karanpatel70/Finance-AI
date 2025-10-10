@@ -269,7 +269,7 @@ export default function HelpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-20" suppressHydrationWarning>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pt-20">
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
         <div className="container mx-auto px-4 text-center">
@@ -285,24 +285,27 @@ export default function HelpPage() {
               Find answers to your questions and learn how to make the most of Finance AI
             </p>
             
-            {/* Search Bar */}
+            {/* 
+            // Search Bar 
             <div className="max-w-2xl mx-auto">
-              <div className="relative">
-                <LucideSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <div className="relative flex items-center">
+                <LucideSearch className="absolute left-4 h-6 w-6 text-gray-400" />
                 <Input
-                  placeholder="Search for help articles, features, or topics..."
-                  className="pl-12 pr-4 py-4 text-lg bg-white text-gray-900 border-0 rounded-full"
+                  type="text"
+                  placeholder="Search for articles, topics, or FAQs..."
+                  className="w-full pl-14 pr-4 py-3 rounded-full border-2 border-blue-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 shadow-md text-lg transition-all duration-300 ease-in-out"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 rounded-full px-6">
-                  Search
-                </Button>
               </div>
-              
-              {/* Search Results */}
-              {searchResults.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+
+              {searchResults.length > 0 && searchTerm && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="mt-4 bg-white rounded-lg shadow-lg max-h-80 overflow-y-auto"
+                >
                   {searchResults.map((result, index) => (
                     <div key={index} className="p-4 border-b hover:bg-gray-50 cursor-pointer">
                       <div className="flex items-start justify-between">
@@ -316,9 +319,10 @@ export default function HelpPage() {
                       </div>
                     </div>
                   ))}
-                </div>
+                </motion.div>
               )}
             </div>
+            */}
           </motion.div>
         </div>
       </section>
