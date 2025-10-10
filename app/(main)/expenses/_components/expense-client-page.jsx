@@ -44,7 +44,7 @@ export function ExpenseClientPage({
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     accountId: defaultAccountId || "",
-    type: "EXPENSE", // Default to expenses for this page
+    type: "", // Default to all transaction types for this page
     category: "",
     tagIds: [],
     minAmount: "",
@@ -64,6 +64,7 @@ export function ExpenseClientPage({
         ...filters,
         accountId: filters.accountId === "all-accounts" ? null : filters.accountId, // Handle 'All Accounts'
         category: filters.category === "all-categories" ? null : filters.category, // Handle 'All Categories'
+        type: filters.type === "all-types" ? null : filters.type, // Handle 'All' transaction types
         startDate: filters.startDate ? filters.startDate.toISOString() : null,
         endDate: filters.endDate ? filters.endDate.toISOString() : null,
         minAmount: filters.minAmount && !isNaN(parseFloat(filters.minAmount)) ? parseFloat(filters.minAmount) : null, // Convert to float or null
@@ -94,7 +95,7 @@ export function ExpenseClientPage({
   const handleClearFilters = () => {
     setFilters({
       accountId: "all-accounts", // Reset to show all accounts
-      type: "EXPENSE",
+      type: "all-types", // Reset to show all transaction types
       category: "all-categories", // Reset to show all categories
       tagIds: [],
       minAmount: "",
@@ -141,6 +142,21 @@ export function ExpenseClientPage({
                     {account.name}
                   </SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+
+            {/* Type Filter */}
+            <Select
+              value={filters.type === null || filters.type === "" ? "all-types" : filters.type}
+              onValueChange={(value) => handleFilterChange("type", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Transaction Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-types">All Types</SelectItem>
+                <SelectItem value="EXPENSE">Expense</SelectItem>
+                <SelectItem value="INCOME">Income</SelectItem>
               </SelectContent>
             </Select>
 
