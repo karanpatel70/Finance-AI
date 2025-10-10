@@ -49,7 +49,7 @@ export async function createGoal(data) {
     data: {
       title: data.title,
       targetAmount,
-      dueDate: data.dueDate ? new Date(data.dueDate).toISOString().split('T')[0] : null, // Store as YYYY-MM-DD
+      dueDate: data.dueDate ? new Date(data.dueDate).toISOString() : null, // Store as ISO-8601 DateTime
       priority: data.priority || 0,
       autoContributeAmount: data.autoContributeAmount ? parseFloat(data.autoContributeAmount) : null,
       autoContributeFrequency: data.autoContributeFrequency || null,
@@ -74,7 +74,7 @@ export async function updateGoal(goalId, data) {
     if (isNaN(amt) || amt < 0) throw new Error("Invalid current amount");
     payload.currentAmount = amt;
   }
-  if (payload.dueDate) payload.dueDate = new Date(payload.dueDate).toISOString().split('T')[0]; // Store as YYYY-MM-DD
+  if (payload.dueDate) payload.dueDate = new Date(payload.dueDate).toISOString(); // Store as ISO-8601 DateTime
   if (payload.priority !== undefined) {
     const p = parseInt(payload.priority);
     if (isNaN(p)) throw new Error("Invalid priority");
