@@ -8,6 +8,14 @@ import { request } from "@arcjet/next";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+async function requireUser() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+  const user = await db.user.findUnique({ where: { clerkUserId: userId } });
+  if (!user) throw new Error("User not found");
+  return user;
+}
 const serializeAmount = (obj) => {
     const newObj = {
         ...obj,
@@ -174,7 +182,7 @@ export async function createTransaction(data) {
 // Scan Receipt
 export async function scanReceipt(file) {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
 
     // Convert File to ArrayBuffer
     const arrayBuffer = await file.arrayBuffer();
@@ -217,20 +225,27 @@ export async function scanReceipt(file) {
 
     try {
       const data = JSON.parse(cleanedText);
+      
+      if (!data || Object.keys(data).length === 0) {
+        console.warn("Gemini returned an empty or invalid object, not a receipt.");
+        return { amount: null, date: null, description: "", category: "", merchantName: "" };
+      }
+
+      // Validate and return extracted data
       return {
-        amount: parseFloat(data.amount),
-        date: new Date(data.date),
-        description: data.description,
-        category: data.category,
-        merchantName: data.merchantName,
+        amount: data.amount ? parseFloat(data.amount) : null,
+        date: data.date ? new Date(data.date) : null,
+        description: data.description || "",
+        category: data.category || "",
+        merchantName: data.merchantName || "",
       };
     } catch (parseError) {
-      console.error("Error parsing JSON response:", parseError);
-      throw new Error("Invalid response format from Gemini");
+      console.error("Error parsing JSON response from Gemini:", parseError, "Original text:", cleanedText);
+      throw new Error("Invalid response format from AI: " + parseError.message);
     }
   } catch (error) {
-    console.error("Error scanning receipt:", error);
-    throw new Error("Failed to scan receipt");
+    console.error("Detailed error scanning receipt:", error);
+    throw new Error("Failed to scan receipt: " + error.message);
   }
 }
 

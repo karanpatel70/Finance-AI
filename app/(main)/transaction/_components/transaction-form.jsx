@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon, Loader2 } from "lucide-react";
@@ -95,21 +95,26 @@ export function AddTransactionForm({
     }
   };
 
-  const handleScanComplete = (scannedData) => {
-    
+  const handleScanComplete = useCallback((scannedData) => {
     if (scannedData) {
-      setValue("amount", scannedData.amount.toString());
-      setValue("date", new Date(scannedData.date));
+      if (scannedData.amount) {
+        setValue("amount", scannedData.amount.toString());
+      }
+      if (scannedData.date) {
+        setValue("date", new Date(scannedData.date));
+      }
       if (scannedData.description) {
         setValue("description", scannedData.description);
       }
       if (scannedData.category) {
-        console.log(scannedData.category);
         setValue("category", scannedData.category);
+      }
+      if (scannedData.merchantName) {
+        setValue("merchantName", scannedData.merchantName);
       }
       toast.success("Receipt scanned successfully");
     }
-  };
+  }, [setValue]);
 
   useEffect(() => {
     if (transactionResult?.success && !transactionLoading) {
@@ -121,7 +126,7 @@ export function AddTransactionForm({
       reset();
       router.push(`/account/${transactionResult.data.accountId}`);
     }
-  }, [transactionResult, transactionLoading, editMode]);
+  }, [transactionResult, transactionLoading, editMode, reset, router]);
 
   const type = watch("type");
   const isRecurring = watch("isRecurring");

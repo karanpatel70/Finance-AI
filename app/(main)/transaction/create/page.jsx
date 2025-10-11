@@ -4,7 +4,7 @@ import { AddTransactionForm } from "../_components/transaction-form";
 import { getTransaction } from "@/actions/transaction";
 import ClientOnly from "@/components/client-only";
 
-export default async function AddTransactionPage({ searchParams }) {
+export default async function AddTransactionPage({ searchParams = {} }) {
   const accounts = await getUserAccounts();
 
   const editId = searchParams?.edit;
