@@ -43,7 +43,7 @@ function getSimulatedSector(symbol) {
 }
 
 // Simulate fetching real-time market price
-async function fetchMarketPrice(symbol) {
+export async function fetchMarketPrice(symbol) {
   // In a real application, this would call an external API (e.g., Alpha Vantage, Finnhub)
   console.log(`Simulating fetching market price for ${symbol}`);
   return Math.random() * 1000; // Return a random price for demonstration
